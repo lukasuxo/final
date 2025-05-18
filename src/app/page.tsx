@@ -3,8 +3,16 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, useAnimation } from "framer-motion";
 import { Mail, Lock, User, ChevronRight, X, Eye, EyeOff } from "lucide-react";
 
+interface User {
+  id: number;
+  email: string;
+  password: string;
+  username: string;
+  profileImage: string | null;
+}
+
 interface ThreadsAuthSystemProps {
-  onLogin: (user: any) => void;
+  onLogin: (user: User) => void;
 }
 
 const ThreadsAuthSystem: React.FC<ThreadsAuthSystemProps> = ({ onLogin }) => {
@@ -13,7 +21,7 @@ const ThreadsAuthSystem: React.FC<ThreadsAuthSystemProps> = ({ onLogin }) => {
   >("login");
   const [showPassword, setShowPassword] = useState(false);
   const [showEmptyPage, setShowEmptyPage] = useState(false);
-  const [currentUser, setCurrentUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -98,8 +106,8 @@ const ThreadsAuthSystem: React.FC<ThreadsAuthSystemProps> = ({ onLogin }) => {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const user = users.find((u: any) => u.email === formData.email);
+      const users = JSON.parse(localStorage.getItem("users") || "[]") as User[];
+      const user = users.find((u) => u.email === formData.email);
 
       if (!user) {
         setErrors({ email: "No user found with this email" });
@@ -120,8 +128,8 @@ const ThreadsAuthSystem: React.FC<ThreadsAuthSystemProps> = ({ onLogin }) => {
   const handleRegister = (e: React.FormEvent) => {
     e.preventDefault();
     if (validateForm()) {
-      const users = JSON.parse(localStorage.getItem("users") || "[]");
-      const newUser = {
+      const users = JSON.parse(localStorage.getItem("users") || "[]") as User[];
+      const newUser: User = {
         id: Date.now(),
         email: formData.email,
         password: formData.password,
@@ -319,7 +327,7 @@ const ThreadsAuthSystem: React.FC<ThreadsAuthSystemProps> = ({ onLogin }) => {
             onClick={() => setActiveScreen("register")}
             className="text-blue-500 hover:underline flex items-center justify-center gap-1 mx-auto w-fit"
           >
-            Don't have an account?
+            Don&apos;t have an account?
             <ChevronRight size={16} className="text-blue-400" />
           </motion.button>
         </div>
